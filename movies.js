@@ -23,10 +23,10 @@ fetch('http://localhost:3000/films')
         <p>${films.description}</p>
     `;
  }
-    // Code for making a buy ticket button
+    // Code for making a buy return button
   const returnButton = document.getElementById('return-button');
     returnButton.addEventListener('click', () => {
-      const voteCount = document.getElementById('vote-count');
-     animal.votes++;
-      voteCo.texunttContent = animal.votes;
+      const  returnButton= document.getElementById('showMovieDetails');
+      showMovieDetails;
+      returnButton.textContent = showMovieDetails; 
     });
