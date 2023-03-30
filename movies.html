@@ -1,34 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flatdango Movies</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Search</title>
+  <link rel="stylesheet" href="movies.css">
 </head>
-<link rel="stylesheet" href="movies.css">
 <body>
-    <h1>Flatiron Movie Theater</h1>
-    <header>
-        <h3>
-        <form id="form">
-            <input type="text" autocomplete="off" id="search" placeholder="Search" class="search">
-        </form>
-        </h3>
-        <button id="returnButton">Return To Other Movies</button>
-    </header>
-    <h4>MOVIES LIST</h4>
-    <div id="movieContainer">
-        <h2 id="movieTitle"></h2>
-        <p id="movieDescription"></p>
-        <p id="movieShowtime"></p>
-        <img id="moviePoster" src="" alt="">
-        <p id="movieRuntime"></p>
-        <p id="movieTicketsSold"></p>
-        <p id="movieCapacity"></p>
-    </div>
-    <button id="ticketButton">Buy A ticket</button> 
-    <main id="main"></main>
-    <script defer src="movies.js"></script>
+  <header>
+    <form id="form">
+      <input type="text" autocomplete="off" id="search" placeholder="Search" class="search">
+    </form>
+    
+  </header>
+  <h1>Movie Titles</h1>
+  <ul id="films-titles"></ul>
+  <button id="buy-ticket-main">Buy Ticket</button>
+ 
+  <main id="main"></main>
+  <script>
+    fetch('http://localhost:3000/films?t=' + Date.now())
+      .then(response => response.json())
+      .then(data => {
+        const numMovies = document.createElement('span');
+        numMovies.textContent = data.length;
+        const filmsTitle = document.getElementById('films-titles');
+        filmsTitle.appendChild(numMovies);
+
+        const filmsTitlesList = document.getElementById('films-titles');
+        data.forEach(movie => {
+          const li = document.createElement('li');
+          li.textContent = movie.title;
+          li.dataset.id = movie.id; // Set the movie ID as a dataset attribute
+          filmsTitlesList.appendChild(li);
+        });
+      })
+      .catch(error => console.error(error));
+
+    const filmsList = document.getElementById('films-titles');
+
+    // Listen for click events on each movie title in the list
+    filmsList.addEventListener('click', e => {
+      if (e.target.tagName === 'LI') {
+        const filmId = e.target.dataset.id; // Get the movie ID from the dataset attribute
+        fetch('http://localhost:3000/films/' + filmId)
+          .then(response => response.json())
+          .then(movie => {
+            // Create and append elements to display movie details
+            
+            const main = document.getElementById('main');
+            main.innerHTML = `
+              <h2>${movie.title}</h2>
+              <img src="${movie.poster}" alt="${movie.title} poster" style="max-width: 300px;">
+              <p><strong>Description:</strong> ${movie.description}</p>
+              <p><strong>Showtime:</strong> ${movie.showtime}</p>
+              <p><strong>Tickets Sold:</strong> ${movie.tickets_sold}</p>
+              <p><strong>Capacity:</strong> ${movie.capacity}</p>
+              <p><strong>Runtime:</strong> ${movie.runtime} min</p>
+              <p><strong>Available Tickets:</strong> ${movie.capacity - movie.tickets_sold}</p>
+               `;
+          })
+          .catch(error => console.error(error));
+      }
+    });
+    
+    // Fetch film data
+fetch('http://localhost:3000/films/1')
+  .then(response => response.json())
+  .then(data => {
+    // Calculate available tickets
+    const ticketsAvailable = data.capacity - data.tickets_sold;
+    
+    // Render film details
+    const movieContainer = document.getElementById('movieContainer');
+    movieContainer.innerHTML = `
+      <img src="${data.poster}" alt="${data.title}" style="max-width:300px">
+      <h2>${data.title}</h2>
+      <p>Runtime: ${data.runtime} minutes</p>
+      <p>Showtime: ${data.showtime}</p>
+      <p>Available Tickets: ${ticketsAvailable}</p> `;
+    
+
+   
+  });
+
+  </script>
+  <script src="movies.js"></script>
 </body>
 </html>

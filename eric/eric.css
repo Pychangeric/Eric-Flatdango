@@ -1,5 +1,0 @@
-const returnButton = document.getElementById('return-button');
-returnButton.addEventListener('click', () => {
-  const  returnButton= document.getElementById('showMovieDetails');
-  showMovieDetails;
-  returnButton.textContent = showMovieDetails; 

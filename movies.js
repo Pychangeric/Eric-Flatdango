@@ -1,32 +1,65 @@
-fetch('http://localhost:3000/films')
+const APIURL = 'http://localhost:3000/films';
+const IMGPATH = "./images/";
+const main = document.getElementById("main");
+const form = document.getElementById("form");
+const searchForm = document.getElementById("searchForm");
+
+let ticketsAvailable;
+
+
+    // Handle ticket purchase button click
+    const buyTicketButton = document.getElementById('buy-ticket-main');
+buyTicketButton.addEventListener('click', () => {
+      if (ticketsAvailable <= 0) {
+        alert('Sorry, this showing is sold out!');
+      } else {
+        alert('ticket bought!');
+        // Decrement tickets sold and update server
+        data.tickets_sold++;
+        fetch(`http://localhost:3000/films/${data.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
         .then(response => response.json())
-        .then(data => {
-          const movieContainer = document.getElementById('movieContainer');
-          data.forEach(film => {
-            const listItem = document.createElement('li');
-            listItem.textContent = film.title;
-            listItem.addEventListener('click', () => showMovieDetails(film));
-            movieContainer.appendChild(listItem);
-          });
+        .then(updatedData => {
+          // Calculate available tickets and update UI
+          const ticketsAvailable = updatedData.capacity - updatedData.tickets_sold;
+          const ticketsAvailableElement = document.querySelector('#main p:last-child');
+          ticketsAvailableElement.textContent = `Available Tickets: ${ticketsAvailable};
+          buyTicketButton.disabled = true;
+          `;
         });
- // Display details for selected movie
- function showMovieDetails(films) {
-    const filmsDetails = document.getElementById('movieContainer');
-    filmsDetails.innerHTML = `
-      <img src="${films.poster}" alt="">
-      <h2><strong>TITLE</strong>:${films.title}</h2>
-      <p><strong>ID</strong>:${films.id}</p>
-      <p><strong>RUNTIME</strong>:${films.runtime}</p>
-      <p><strong>AVAILABLE TICKETS</strong>:${films.capacity-films.tickets_sold}</p>
-        <p><strong>Showtime</strong>:${films.showtime}</p>
-        <p><strong>CAPACITY</strong>:${films.capacity}</p>
-        <p><strong>DESCRIPTION</strong>:${films.description}</p>
-    `;
- }
-    // Code for making a buy return button
-  const returnButton = document.getElementById('return-button');
-    returnButton.addEventListener('click', () => {
-      const  returnButton= document.getElementById('showMovieDetails');
-      showMovieDetails;
-      returnButton.textContent = showMovieDetails; 
+      }
     });
+
+
+// Get movies based on search term
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const searchTerm = document.getElementById("search").value;
+  fetch(`${APIURL}?q=${searchTerm}`)
+    .then((response) => response.json())
+    .then((data) => {
+      const movies = data.filter((movie) =>
+        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      displayMovies(movies);
+    })
+    .catch((error) => console.error(error));
+});
+
+// Display movies in the main section
+function displayMovies(movies) {
+  main.innerHTML = "";
+  const moviesList = document.createElement("ul");
+  movies.forEach((movie) => {
+    const li = document.createElement("li");
+    li.textContent = movie.title;
+    li.dataset.id = movie.id;
+    moviesList.appendChild(li);
+  });
+  main.appendChild(moviesList);
+}
