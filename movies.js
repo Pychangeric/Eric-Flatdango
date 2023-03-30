@@ -13,14 +13,14 @@ fetch('http://localhost:3000/films')
  function showMovieDetails(films) {
     const filmsDetails = document.getElementById('movieContainer');
     filmsDetails.innerHTML = `
-      <h2>${films.title}</h2>
       <img src="${films.poster}" alt="">
-      <p>${films.id}</p>
-      <p>${films.runtime}</p>
-      <p> id="availableTickets" [${films.capacity}-${films.tickets_sold}]</p>
-        <p>${films.showtime}</p>
-        <p>${films.capacity}</p>
-        <p>${films.description}</p>
+      <h2><strong>TITLE</strong>:${films.title}</h2>
+      <p><strong>ID</strong>:${films.id}</p>
+      <p><strong>RUNTIME</strong>:${films.runtime}</p>
+      <p><strong>AVAILABLE TICKETS</strong>:${films.capacity-films.tickets_sold}</p>
+        <p><strong>Showtime</strong>:${films.showtime}</p>
+        <p><strong>CAPACITY</strong>:${films.capacity}</p>
+        <p><strong>DESCRIPTION</strong>:${films.description}</p>
     `;
  }
     // Code for making a buy return button

@@ -1,23 +1,23 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="movies.css">
-    <title>Document</title>
+    <title>Flatdango Movies</title>
 </head>
+<link rel="stylesheet" href="movies.css">
 <body>
+    <h1>Flatiron Movie Theater</h1>
     <header>
         <h3>
         <form id="form">
             <input type="text" autocomplete="off" id="search" placeholder="Search" class="search">
-            <button type="return">return</button>
-            <button type="buyticket"buyticket></button>
         </form>
         </h3>
+        <button id="returnButton">Return To Other Movies</button>
     </header>
+    <h4>MOVIES LIST</h4>
     <div id="movieContainer">
         <h2 id="movieTitle"></h2>
         <p id="movieDescription"></p>
@@ -27,7 +27,8 @@
         <p id="movieTicketsSold"></p>
         <p id="movieCapacity"></p>
     </div>
-
+    <button id="ticketButton">Buy A ticket</button> 
+    <main id="main"></main>
+    <script defer src="movies.js"></script>
 </body>
-<script src="movies.js"></script>
 </html>
