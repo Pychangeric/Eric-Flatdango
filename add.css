@@ -1,0 +1,40 @@
+*{
+    background-color: aqua;
+}
+header {
+    background-color: #333;
+    padding: 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  
+  .add a {
+    color:blue;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 50px;
+
+  }
+  
+  form label, form input {
+    margin: 10px;
+  }
+  
+  form input {
+    opacity: 1;
+    padding: 10px;
+    border-color: black;
+    border: #333;
+    border-radius: 5px;
+    width: 250px;
+    background-color: blue;
+  }
+  

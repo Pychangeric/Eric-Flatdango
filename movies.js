@@ -4,6 +4,8 @@ const main = document.getElementById("main");
 const form = document.getElementById("form");
 const searchForm = document.getElementById("searchForm");
 
+
+
 const returnButtonContainer = document.getElementById("return-button-container");
 const returnButton = document.createElement("button");
 returnButton.textContent = "Return to Movie List";
@@ -103,4 +105,5 @@ fetch(APIURL)
   .then(response => response.json())
   .then(data => displayMovies(data))
   .catch(error => console.error(error));
-  
+
+
