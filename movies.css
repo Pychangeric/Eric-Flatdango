@@ -30,7 +30,6 @@ body {
     margin-right: 5%;
     width: 65%;
   }
-  
   #buy-ticket-main {
     display: block;
     margin-top: 20px;
@@ -76,4 +75,29 @@ body {
   .movie-details p:last-child {
     margin-bottom: 0;
   }
+   
+  #main {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem;
+    float: right;
+    height: 30vh;
+  }
+  #movie-list {
+    flex-basis: 50%;
+    margin-right: 1rem;
+  }
+  
+ 
+  #return-button {
+    margin-top: 1rem;
+    align-self: right;
+
+  }
+  .movie-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
   

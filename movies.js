@@ -4,6 +4,16 @@ const main = document.getElementById("main");
 const form = document.getElementById("form");
 const searchForm = document.getElementById("searchForm");
 
+const returnButtonContainer = document.getElementById("return-button-container");
+const returnButton = document.createElement("button");
+returnButton.textContent = "Return to Movie List";
+returnButton.addEventListener("click", () => {
+  // Redirect to the movie list page
+  window.location.href = "movies.html";
+});
+returnButtonContainer.appendChild(returnButton);
+
+
 // Get movies based on search term
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -51,16 +61,16 @@ function displayMovies(movies) {
     buyTicketButton.addEventListener("click", () => {
       if (movie.tickets_sold >= movie.capacity) {
         alert('Sorry, this showing is sold out!');
+      } else if (buyTicketButton.disabled) {
+        alert('You already bought a ticket for this showing!');
       } else {
         alert('Ticket bought!');
         // Decrement tickets available and increment tickets sold
         movie.tickets_sold++;
         const ticketsAvailableElement = li.querySelector(".movie-details p");
         ticketsAvailableElement.textContent = `Available Tickets: ${movie.capacity - movie.tickets_sold}`;
-
         // Disable buy ticket button
         buyTicketButton.disabled = true;
-
         // Update server
         fetch(`${APIURL}/${movie.id}`, {
           method: 'PUT',
@@ -93,3 +103,4 @@ fetch(APIURL)
   .then(response => response.json())
   .then(data => displayMovies(data))
   .catch(error => console.error(error));
+  
