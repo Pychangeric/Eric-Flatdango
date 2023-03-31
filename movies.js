@@ -4,38 +4,6 @@ const main = document.getElementById("main");
 const form = document.getElementById("form");
 const searchForm = document.getElementById("searchForm");
 
-let ticketsAvailable;
-
-
-    // Handle ticket purchase button click
-    const buyTicketButton = document.getElementById('buy-ticket-main');
-buyTicketButton.addEventListener('click', () => {
-      if (ticketsAvailable = 0) {
-        alert('Sorry, this showing is sold out!');
-      } else {
-        alert('ticket bought!');
-        // Decrement tickets sold and update server
-        data.tickets_sold++;
-        fetch(`http://localhost:3000/films/${data.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(updatedData => {
-          // Calculate available tickets and update UI
-          const ticketsAvailable = updatedData.capacity - updatedData.tickets_sold;
-          const ticketsAvailableElement = document.querySelector('#main p:last-child');
-          ticketsAvailableElement.textContent = `Available Tickets: ${ticketsAvailable};
-          buyTicketButton.disabled = true;
-          `;
-        });
-      }
-    });
-
-
 // Get movies based on search term
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -59,7 +27,69 @@ function displayMovies(movies) {
     const li = document.createElement("li");
     li.textContent = movie.title;
     li.dataset.id = movie.id;
+
+    // Display movie poster
+    const img = document.createElement("img");
+    img.src = IMGPATH + movie.poster;
+    img.alt = movie.title;
+    img.classList.add("movie-poster");
+    li.appendChild(img);
+
+    // Display movie information
+    const movieDetails = document.createElement("div");
+    movieDetails.classList.add("movie-details");
+
+    // Display available tickets
+    const ticketsAvailable = document.createElement("p");
+    ticketsAvailable.textContent = `Available Tickets: ${movie.capacity - movie.tickets_sold}`;
+    movieDetails.appendChild(ticketsAvailable);
+
+    // Display buy ticket button
+    const buyTicketButton = document.createElement("button");
+    buyTicketButton.textContent = "Buy Ticket";
+    buyTicketButton.classList.add("buy-ticket-button");
+    buyTicketButton.addEventListener("click", () => {
+      if (movie.tickets_sold >= movie.capacity) {
+        alert('Sorry, this showing is sold out!');
+      } else {
+        alert('Ticket bought!');
+        // Decrement tickets available and increment tickets sold
+        movie.tickets_sold++;
+        const ticketsAvailableElement = li.querySelector(".movie-details p");
+        ticketsAvailableElement.textContent = `Available Tickets: ${movie.capacity - movie.tickets_sold}`;
+
+        // Disable buy ticket button
+        buyTicketButton.disabled = true;
+
+        // Update server
+        fetch(`${APIURL}/${movie.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(movie)
+        })
+        .then(() => {
+          // Refresh movie list to show updated information
+          fetch(APIURL)
+            .then(response => response.json())
+            .then(data => displayMovies(data))
+            .catch(error => console.error(error));
+        })
+        .catch(error => console.error(error));
+      }
+    });
+    movieDetails.appendChild(buyTicketButton);
+
+    li.appendChild(movieDetails);
+
     moviesList.appendChild(li);
   });
   main.appendChild(moviesList);
 }
+
+// Initial display of all movies
+fetch(APIURL)
+  .then(response => response.json())
+  .then(data => displayMovies(data))
+  .catch(error => console.error(error));
