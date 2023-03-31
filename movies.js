@@ -10,7 +10,7 @@ let ticketsAvailable;
     // Handle ticket purchase button click
     const buyTicketButton = document.getElementById('buy-ticket-main');
 buyTicketButton.addEventListener('click', () => {
-      if (ticketsAvailable <= 0) {
+      if (ticketsAvailable = 0) {
         alert('Sorry, this showing is sold out!');
       } else {
         alert('ticket bought!');
@@ -39,7 +39,7 @@ buyTicketButton.addEventListener('click', () => {
 // Get movies based on search term
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  const searchTerm = document.getElementById("search").value;
+  const searchTerm = document.getElementById("search,movie.poster").value;
   fetch(`${APIURL}?q=${searchTerm}`)
     .then((response) => response.json())
     .then((data) => {

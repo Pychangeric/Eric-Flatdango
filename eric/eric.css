@@ -1,0 +1,54 @@
+body {
+    background-color: #333;
+  }
+  
+  header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #222;
+    height: 50px;
+    margin-bottom: 20px;
+  }
+  
+  .search {
+    margin-right: 20px;
+  }
+  
+  #films-titles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    vertical-align: top;
+    width: 30%;
+  }
+  
+  #main {
+    display: inline-block;
+    vertical-align: top;
+    width: 70%;
+  }
+  
+  #buy-ticket-main {
+    display: block;
+    margin-top: 20px;
+  }
+  
+  h1, h2 {
+    color: #fff;
+    font-weight: normal;
+  }
+  
+  li {
+    cursor: pointer;
+    padding: 5px;
+    margin-bottom: 5px;
+    background-color: #444;
+    color: #fff;
+  }
+  
+  li:hover {
+    background-color: #555;
+  }
+  

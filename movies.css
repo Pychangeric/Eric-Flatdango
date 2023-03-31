@@ -1,6 +1,79 @@
-.movieContainer{
+body {
+    background-color: black;
+  }
+  header {
+    background-color: greenyellow;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    position: relative;
+  }
+  
+  .search {
     position: absolute;
-    width: 40%;
-    top: 0;
-    right: 0;
-}
+    top: 5px;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 20px;
+  }
+  #films-titles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    float: left;
+    width: 30%;
+  }
+  
+  #main {
+    margin-right: 5%;
+    width: 65%;
+  }
+  
+  #buy-ticket-main {
+    display: block;
+    margin-top: 20px;
+  }
+  
+  h1, h2 {
+    color: #fff;
+    font-weight: normal;
+  }
+  
+  li {
+    cursor: pointer;
+    padding: 5px;
+    margin-bottom: 5px;
+    background-color: #444;
+    color: #fff;
+  }
+  
+  li:hover {
+    background-color: #555;
+  }
+  
+  #main h2,
+  #main p {
+    color: #fff;
+  }
+  
+  #main img {
+    max-width: 100%;
+    float: right;
+    margin-left: 10px;
+  }
+  
+  .movie-details {
+    overflow: hidden;
+  }
+  
+  .movie-details p {
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  
+  .movie-details p:last-child {
+    margin-bottom: 0;
+  }
+  
