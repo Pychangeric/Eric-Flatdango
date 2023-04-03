@@ -10,7 +10,7 @@ has driven by personal instics.
 ******
 
 ## SCREENSHOTS
-- link 1
+- https://github.com/The-Tribe-2-0/codedev3/issues/3#issue-1652574140
 - link 2
 
 
