@@ -1,109 +1,116 @@
-const APIURL = 'http://localhost:3000/films';
-const IMGPATH = "./images/";
-const main = document.getElementById("main");
-const form = document.getElementById("form");
-const searchForm = document.getElementById("searchForm");
+document.addEventListener('DOMContentLoaded', () => {
+  const APIURL = 'http://localhost:3000/films';
+  const randomFilmContainer = document.getElementById('random-film-container');
+  const filmSlider = document.getElementById('film-slider');
+  const prevButton = document.getElementById('prev-button');
+  const nextButton = document.getElementById('next-button');
+  const modal = document.getElementById('modal');
 
 
+  // Fetch films and display random film and film slider
+  fetch(APIURL)
+    .then(response => response.json())
+    .then(data => {
+      // Create a random film
+      const randomFilm = data[Math.floor(Math.random() * data.length)];
 
-const returnButtonContainer = document.getElementById("return-button-container");
-const returnButton = document.createElement("button");
-returnButton.textContent = "Return to Movie List";
-returnButton.addEventListener("click", () => {
-  // Redirect to the movie list page
-  window.location.href = "movies.html";
-});
-returnButtonContainer.appendChild(returnButton);
+      // Display the random film
+      displayRandomFilm(randomFilm);
 
-
-// Get movies based on search term
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const searchTerm = document.getElementById("search,movie.poster").value;
-  fetch(`${APIURL}?q=${searchTerm}`)
-    .then((response) => response.json())
-    .then((data) => {
-      const movies = data.filter((movie) =>
-        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      displayMovies(movies);
+      // Display the film slider
+      displayFilmSlider(data.filter(film => film.id !== randomFilm.id));
     })
-    .catch((error) => console.error(error));
-});
+    .catch(error => console.error(error));
 
-// Display movies in the main section
-function displayMovies(movies) {
-  main.innerHTML = "";
-  const moviesList = document.createElement("ul");
-  movies.forEach((movie) => {
-    const li = document.createElement("li");
-    li.textContent = movie.title;
-    li.dataset.id = movie.id;
+  // Function to display the random film
+  function displayRandomFilm(randomFilm) {
+    const img = document.createElement('img');
+    img.src = randomFilm.poster;
+    img.alt = randomFilm.title + ' poster';
+    randomFilmContainer.appendChild(img);
 
-    // Display movie poster
-    const img = document.createElement("img");
-    img.src = IMGPATH + movie.poster;
-    img.alt = movie.title;
-    img.classList.add("movie-poster");
-    li.appendChild(img);
+    // Listen for click event on the random film
+    img.addEventListener('click', () => {
+      displayModal(randomFilm);
+    });
+  }
 
-    // Display movie information
-    const movieDetails = document.createElement("div");
-    movieDetails.classList.add("movie-details");
+  // Function to display the film slider
+  function displayFilmSlider(films) {
+    films.forEach(film => {
+      const img = document.createElement('img');
+      img.src = film.poster;
+      img.alt = film.title + ' poster';
+      img.dataset.id = film.id;
+      filmSlider.appendChild(img);
 
-    // Display available tickets
-    const ticketsAvailable = document.createElement("p");
-    ticketsAvailable.textContent = `Available Tickets: ${movie.capacity - movie.tickets_sold}`;
-    movieDetails.appendChild(ticketsAvailable);
+      // Listen for click event on each film in the slider
+      img.addEventListener('click', () => {
+        fetchFilmDetails(film.id);
+      });
+    });
 
-    // Display buy ticket button
-    const buyTicketButton = document.createElement("button");
-    buyTicketButton.textContent = "Buy Ticket";
-    buyTicketButton.classList.add("buy-ticket-button");
-    buyTicketButton.addEventListener("click", () => {
-      if (movie.tickets_sold >= movie.capacity) {
-        alert('Sorry, this showing is sold out!');
-      } else if (buyTicketButton.disabled) {
-        alert('You already bought a ticket for this showing!');
-      } else {
-        alert('Ticket bought!');
-        // Decrement tickets available and increment tickets sold
-        movie.tickets_sold++;
-        const ticketsAvailableElement = li.querySelector(".movie-details p");
-        ticketsAvailableElement.textContent = `Available Tickets: ${movie.capacity - movie.tickets_sold}`;
-        // Disable buy ticket button
-        buyTicketButton.disabled = true;
-        // Update server
-        fetch(`${APIURL}/${movie.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(movie)
-        })
-        .then(() => {
-          // Refresh movie list to show updated information
-          fetch(APIURL)
-            .then(response => response.json())
-            .then(data => displayMovies(data))
-            .catch(error => console.error(error));
-        })
-        .catch(error => console.error(error));
+    // Handle slider navigation
+    let currentIndex = 0;
+    const filmWidth = 210; // Including margin
+    const maxIndex = films.length - 1;
+
+    prevButton.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateSliderPosition();
       }
     });
-    movieDetails.appendChild(buyTicketButton);
 
-    li.appendChild(movieDetails);
+    nextButton.addEventListener('click', () => {
+      if (currentIndex < maxIndex) {
+        currentIndex++;
+        updateSliderPosition();
+      }
+    });
 
-    moviesList.appendChild(li);
-  });
-  main.appendChild(moviesList);
-}
+    // Function to update slider position
+    function updateSliderPosition() {
+      const newPosition = -currentIndex * filmWidth;
+      filmSlider.style.transform = `translateX(${newPosition}px)`;
+    }
+  }
 
-// Initial display of all movies
-fetch(APIURL)
-  .then(response => response.json())
-  .then(data => displayMovies(data))
-  .catch(error => console.error(error));
+  function closeModal() {
+    modal.style.display = 'none';
+  }
 
+  // Function to fetch film details
+  function fetchFilmDetails(filmId) {
+    fetch(`http://localhost:3000/films/${filmId}`)
+      .then(response => response.json())
+      .then(movie => {
+        displayModal(movie);
+      })
+      .catch(error => console.error(error));
+  }
 
+  // Function to display the modal
+  function displayModal(movie) {
+    modal.innerHTML = `
+      <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>${movie.title}</h2>
+        <img src="${movie.poster}" alt="${movie.title} poster" style="max-width: 300px;">
+        <p><strong>Description:</strong> ${movie.description}<br></p>
+        <p><strong>Showtime:</strong> ${movie.showtime}</p>
+        <p><strong>Tickets Sold:</strong> ${movie.tickets_sold}</p>
+        <p><strong>Capacity:</strong> ${movie.capacity}</p>
+        <p><strong>Runtime:</strong> ${movie.runtime} min</p>
+        <p><strong>Available Tickets:</strong> ${movie.capacity - movie.tickets_sold}</p>
+      </div>
+    `;
+    modal.classList.add('modal'); // Add 'modal' class
+    modal.style.display = 'block';
+  }
+
+  // Function to close the modal
+  function closeModal() {
+    modal.style.display = 'none';
+  }
+});

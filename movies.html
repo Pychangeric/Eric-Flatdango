@@ -9,92 +9,23 @@
 </head>
 <body>
   <header>
-    <button ><a href="add.html">click to add movies</a></button>
+    <button><a href="add.html">Click to Add Movies</a></button>
     <form id="form">
       <input type="text" autocomplete="off" id="search" placeholder="Search" class="search">
     </form>
-        
   </header>
 
+  <div id="modal"></div>
   <div id="return-button-container"></div>
-  <h1>Movie Titles</h1>
-  <ul id="films-titles"></ul>
-  <form>
-    <h1>For buying of tickets click on<br> Buy ticket to win your chance </h1>
-  
-  </form>
-  <main id="main"></main>
-  <button id="add-movie-btn"></button>
-  </form>
-  
-  <script>
-    fetch('http://localhost:3000/films?t=' + Date.now())
-      .then(response => response.json())
-      .then(data => {
-        const numMovies = document.createElement('span');
-        numMovies.textContent = data.length;
-        const filmsTitle = document.getElementById('films-titles');
-        filmsTitle.appendChild(numMovies);
+  <div id="main-container">
+    <div id="random-film-container"></div>
+    <div id="film-slider-container">
+      <div id="film-slider"></div>
+      <button id="prev-button">&lt;</button>
+      <button id="next-button">&gt;</button>
+    </div>
+  </div>
 
-        const filmsTitlesList = document.getElementById('films-titles');
-        data.forEach(movie => {
-          const li = document.createElement('li');
-          li.textContent = movie.title;
-          li.dataset.id = movie.id; // Set the movie ID as a dataset attribute
-          filmsTitlesList.appendChild(li);
-        });
-      })
-      .catch(error => console.error(error));
-
-    const filmsList = document.getElementById('films-titles');
-
-    // Listen for click events on each movie title in the list
-    filmsList.addEventListener('click', e => {
-      if (e.target.tagName === 'LI') {
-        const filmId = e.target.dataset.id; // Get the movie ID from the dataset attribute
-        fetch('http://localhost:3000/films/' + filmId)
-          .then(response => response.json())
-          .then(movie => {
-            // Create and append elements to display movie details
-            
-            const main = document.getElementById('main');
-            main.innerHTML = `
-              <h2>${movie.title}</h2>
-              <img src="${movie.poster}" alt="${movie.title} poster" style="max-width: 300px;">
-              <p><strong>Description:</strong> ${movie.description}<br></p>
-              <p><strong>Showtime:</strong> ${movie.showtime}</p>
-              <p><strong>Tickets Sold:</strong> ${movie.tickets_sold}</p>
-              <p><strong>Capacity:</strong> ${movie.capacity}</p>
-              <p><strong>Runtime:</strong> ${movie.runtime} min</p>
-              <p><strong>Available Tickets:</strong> ${movie.capacity - movie.tickets_sold}</p>
-               `;
-          })
-          .catch(error => console.error(error));
-      }
-    });
-    
-    // Fetch film data
-fetch('http://localhost:3000/films/1')
-  .then(response => response.json())
-  .then(data => {
-    // Calculate available tickets
-    const ticketsAvailable = data.capacity - data.tickets_sold;
-    
-    // Render film details
-    const movieContainer = document.getElementById('movieContainer');
-    movieContainer.innerHTML = `
-      <img src="${data.poster}" alt="${data.title}" style="max-width:300px">
-      <h2>${data.title}</h2>
-      <p>Runtime: ${data.runtime} minutes</p>
-      <p>Showtime: ${data.showtime}</p>
-      <p>Available Tickets: ${ticketsAvailable}</p> `;
-    
-
-   
-  });
-
-  </script>
-   <script src="movies.js"></script>
-   <script src="add movies.js"></script>
+  <script src="movies.js"></script>
 </body>
 </html>

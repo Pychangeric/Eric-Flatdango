@@ -1,35 +1,44 @@
 const APIURL = 'http://localhost:3000/films';
 const IMGPATH = "./images/";
+const main = document.getElementById("main");
+const form = document.getElementById("form");
 
-const addMovieForm = document.getElementById("add-movie-form");
-const movieList = document.getElementById("movie-list");
+const returnButtonContainer = document.getElementById("return-button-container");
+const returnButton = document.createElement("button");
+returnButton.textContent = "Return to Movie List";
+returnButton.addEventListener("click", () => {
+  // Redirect to the movie list page
+  window.location.href = "movies.html";
+});
+returnButtonContainer.appendChild(returnButton);
 
-// Function to add a movie to the movie list
-function addMovie(title, poster) {
-  const movie = {title: title, poster: poster};
+// Get movies based on search term
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const searchTerm = document.getElementById("search").value;
+  fetchMovies(searchTerm);
+});
 
-  // Send POST request to server to add movie to database
-  fetch(APIURL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(movie)
-  })
-  .then(response => response.json())
-  .then(data => {
-    // Display the updated movie list
-    displayMovies(data);
-  })
-  .catch(error => console.error(error));
+// Function to fetch movies based on search term
+function fetchMovies(searchTerm) {
+  const url = searchTerm ? `${APIURL}?q=${searchTerm}` : APIURL;
+
+  fetch(url)
+    .then((response) => response.json())
+    .then((data) => {
+      displayMovies(data);
+    })
+    .catch((error) => console.error(error));
 }
 
-// Function to display movies in the movie list
+// Display movies in the main section
 function displayMovies(movies) {
-  movieList.innerHTML = "";
+  main.innerHTML = "";
+  const moviesList = document.createElement("ul");
   movies.forEach((movie) => {
     const li = document.createElement("li");
     li.textContent = movie.title;
+    li.dataset.id = movie.id;
 
     // Display movie poster
     const img = document.createElement("img");
@@ -38,22 +47,55 @@ function displayMovies(movies) {
     img.classList.add("movie-poster");
     li.appendChild(img);
 
-    movieList.appendChild(li);
+    // Display movie information
+    const movieDetails = document.createElement("div");
+    movieDetails.classList.add("movie-details");
+
+    // Display available tickets
+    const ticketsAvailable = document.createElement("p");
+    ticketsAvailable.textContent = `Available Tickets: ${movie.capacity - movie.tickets_sold}`;
+    movieDetails.appendChild(ticketsAvailable);
+
+    // Display buy ticket button
+    const buyTicketButton = document.createElement("button");
+    buyTicketButton.textContent = "Buy Ticket";
+    buyTicketButton.classList.add("buy-ticket-button");
+    buyTicketButton.addEventListener("click", () => {
+      if (movie.tickets_sold >= movie.capacity) {
+        alert('Sorry, this showing is sold out!');
+      } else if (buyTicketButton.disabled) {
+        alert('You already bought a ticket for this showing!');
+      } else {
+        alert('Ticket bought!');
+        // Decrement tickets available and increment tickets sold
+        movie.tickets_sold++;
+        const ticketsAvailableElement = li.querySelector(".movie-details p");
+        ticketsAvailableElement.textContent = `Available Tickets: ${movie.capacity - movie.tickets_sold}`;
+        // Disable buy ticket button
+        buyTicketButton.disabled = true;
+        // Update server
+        fetch(`${APIURL}/${movie.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(movie)
+        })
+        .then(() => {
+          // Refresh movie list to show updated information
+          fetchMovies(); // Fetch all movies after buying a ticket
+        })
+        .catch(error => console.error(error));
+      }
+    });
+    movieDetails.appendChild(buyTicketButton);
+
+    li.appendChild(movieDetails);
+
+    moviesList.appendChild(li);
   });
+  main.appendChild(moviesList);
 }
 
-// Event listener for add movie form
-addMovieForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const title = document.getElementById("movie-title").value;
-  const poster = document.getElementById("movie-poster").value;
-  addMovie(title, poster);
-  // Reset the form
-  addMovieForm.reset();
-});
-
 // Initial display of all movies
-fetch(APIURL)
-  .then(response => response.json())
-  .then(data => displayMovies(data))
-  .catch(error => console.error(error));
+fetchMovies();
