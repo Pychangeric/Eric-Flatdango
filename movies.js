@@ -90,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(error => console.error(error));
   }
 
-  // Function to display the modal
   function displayModal(movie) {
     modal.innerHTML = `
       <div class="modal-content">
@@ -105,11 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <p><strong>Available Tickets:</strong> ${movie.capacity - movie.tickets_sold}</p>
       </div>
     `;
-    modal.classList.add('modal'); // Add 'modal' class
+    modal.classList.add('modal'); 
     modal.style.display = 'block';
   }
 
-  // Function to close the modal
   function closeModal() {
     modal.style.display = 'none';
   }
